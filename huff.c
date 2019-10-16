@@ -1,0 +1,147 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+//frequence
+
+float frequences[256];
+
+void calculFrequences(char* fichier){
+  for (int i = 0; i < 256; i++){
+    frequences[i] = 0;
+  }
+  FILE* fd = fopen(fichier, "r");
+  if (fd){
+    unsigned int c;
+    int nbC = 0;
+    while ( (c = fgetc(fd)) != EOF){
+      //printf("%c %i\n",c,c);
+      frequences[(unsigned char) c]++;
+      nbC++;
+      //printf("%f \n", frequences[(unsigned char) c]);
+    }
+
+    for (int j = 0; j < 256; j++){
+      frequences[j] /= nbC;
+      if (frequences[j] > 0){
+	printf("%c %i %f \n", j, j, frequences[j]);
+      }
+    }
+  }
+  else {
+    printf("ERREUR: <fichier> introuvable.\n");
+  }
+  //printf("%d\n",fgetc(fd));
+
+}
+
+
+//arbre
+struct noeud {
+  int pere;
+  int fg;
+  int fd;
+  float freq;
+};
+
+struct noeud arbre[511];
+
+void creerArbre(){
+
+  int dernierN = 256;
+
+  for (int i = 0; i < 511; i++){
+    arbre[i].pere = -1;
+    arbre[i].fg = -1;
+    arbre[i].fd = -1;
+    arbre[i].freq = 0;
+  }
+  printf("OK\n");
+
+  for (int j = 0; j < 256; j++){
+    arbre[j].freq = frequences[j];
+    //printf("%d %d %d %d %f\n",j, arbre[j].pere, arbre[j].fg, arbre[j].fd, arbre[j].freq);
+  }
+  printf("OK\n");
+
+
+  int imin1 = -1;
+  int imin2 = -2;
+    
+  float fmin1 = 1;
+  float fmin2 = 1;
+       
+  do {
+ 
+    //premier min
+
+    for (int k = 0; k <= dernierN; k++){
+      if ((arbre[k].pere = -1) && (arbre[k].freq > 0) && (arbre[k].freq < fmin1)){
+	imin1 = k;
+	fmin1 = arbre[k].freq;
+	printf("%f\n", fmin1);
+      }
+
+    }
+
+    //deuxieme min
+    
+    for (int l = 0; l <= dernierN; l++){
+      if ((arbre[l].pere = -1) && (arbre[l].freq > 0) && (arbre[l].freq < fmin2) && (l != imin1)){
+	imin2 = l;
+	fmin2 = arbre[l].freq;
+	printf("%f\n", fmin2);
+      }
+
+    }
+    
+    
+    if (imin1 != -1 && imin2 != -1){
+      
+      //mettre a jour l'arbre
+      
+      arbre[imin1].pere = dernierN;
+      arbre[imin2].pere = dernierN;
+      
+      
+      arbre[dernierN].fd = imin1; 
+      arbre[dernierN].fg = imin2;
+      arbre[dernierN].freq = fmin1 + fmin2;
+      printf("%d %d %d %f\n", dernierN, arbre[dernierN].fd, arbre[dernierN].fg, arbre[dernierN].freq);
+      dernierN++;
+      imin1 = -1;
+      imin2 = -2;
+      fmin1 = fmin2 = 1;
+      
+    }
+    
+  } while (dernierN < 511 && imin1 != -1 && imin2 != -1);
+  printf("OK\n");
+  
+  for (int j = 0; j < 511; j++){
+    printf("%d %d %d %d %f\n",j, arbre[j].pere, arbre[j].fg, arbre[j].fd, arbre[j].freq);
+  }
+  
+  printf("OK\n");
+  
+}
+
+//codage
+
+
+
+//compresseur
+
+
+
+//main
+
+int main(int argc, char** argv){
+
+  calculFrequences(argv[1]);
+  creerArbre();
+  
+  return 0;
+
+}
