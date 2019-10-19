@@ -73,14 +73,13 @@ void creerArbre(){
   float fmin2 = 1;
        
   do {
- 
+    
     //premier min
-
     for (int k = 0; k <= dernierN; k++){
       if ((arbre[k].pere = -1) && (arbre[k].freq > 0) && (arbre[k].freq < fmin1)){
 	imin1 = k;
 	fmin1 = arbre[k].freq;
-	printf("%f\n", fmin1);
+	//	printf("%f\n", fmin1);
       }
 
     }
@@ -91,7 +90,7 @@ void creerArbre(){
       if ((arbre[l].pere = -1) && (arbre[l].freq > 0) && (arbre[l].freq < fmin2) && (l != imin1)){
 	imin2 = l;
 	fmin2 = arbre[l].freq;
-	printf("%f\n", fmin2);
+	//	printf("%f\n", fmin2);
       }
 
     }
@@ -108,14 +107,12 @@ void creerArbre(){
       arbre[dernierN].fd = imin1; 
       arbre[dernierN].fg = imin2;
       arbre[dernierN].freq = fmin1 + fmin2;
-      printf("%d %d %d %f\n", dernierN, arbre[dernierN].fd, arbre[dernierN].fg, arbre[dernierN].freq);
       dernierN++;
-      imin1 = -1;
-      imin2 = -2;
+      printf("%d %d %d %f\n", dernierN, arbre[dernierN].fd, arbre[dernierN].fg, arbre[dernierN].freq);
+      imin1 = imin2 = -1;
       fmin1 = fmin2 = 1;
       
     }
-    
   } while (dernierN < 511 && imin1 != -1 && imin2 != -1);
   printf("OK\n");
   
